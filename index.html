@@ -453,17 +453,11 @@ function dlPDF() {
   let y = 0;
   const chk = (h) => { if (y + h > 275) { doc.addPage(); y = 20; } };
  
-  // Clean emojis and non-ASCII characters for PDF
+  // Clean non-ASCII for PDF
   const clean = (txt) => {
     if (!txt) return '';
     return txt
-      .replace(/[☕—–‘’“”]/g, (c) => {
-        const map = {'☕':'',''—':'-','–':'-','‘':"'",'’':"'",'“':'"','”':'"'};
-        return map[c] || '';
-      })
-      .replace(/[^-~
- 
-]/g, '')
+      .replace(/[^\x20-\x7E\n\r]/g, '')
       .trim();
   };
  
