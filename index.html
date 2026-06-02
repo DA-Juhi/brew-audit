@@ -427,7 +427,10 @@ function onDone(txt, nextStage) {
     stag('Your Audit');
     STAGE = 'followup';
     document.getElementById('ui').placeholder = 'Keep chatting with Sage — ask anything…';
-    showAct([{ l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' }]);
+    showAct([
+      { l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' },
+      { l: '💬 Ask Sage More', c: 'prim', fn: 'focusInput()' }
+    ]);
     setTimeout(() => {
       const inv = `What would you like to dig into, ${USER}? I\'m here. ☕`;
       addMsg('sage', inv);
@@ -435,7 +438,10 @@ function onDone(txt, nextStage) {
     }, 600);
   } else if (nextStage === 'followup') {
     stag('Chatting with Sage');
-    showAct([{ l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' }]);
+    showAct([
+      { l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' },
+      { l: '💬 Ask Sage More', c: 'prim', fn: 'focusInput()' }
+    ]);
   }
 }
  
@@ -447,6 +453,20 @@ function dlPDF() {
   let y = 0;
   const chk = (h) => { if (y + h > 275) { doc.addPage(); y = 20; } };
  
+  // Clean emojis and non-ASCII characters for PDF
+  const clean = (txt) => {
+    if (!txt) return '';
+    return txt
+      .replace(/[☕—–‘’“”]/g, (c) => {
+        const map = {'☕':'',''—':'-','–':'-','‘':"'",'’':"'",'“':'"','”':'"'};
+        return map[c] || '';
+      })
+      .replace(/[^-~
+ 
+]/g, '')
+      .trim();
+  };
+ 
   doc.setFillColor(10, 5, 0);
   doc.rect(0, 0, W, 46, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(24);
@@ -455,11 +475,12 @@ function dlPDF() {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
   doc.setTextColor(140, 108, 68);
   const dt = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  doc.text('Business Audit Report for ' + USER + '  ·  ' + dt, M, 34);
+  doc.text('Business Audit Report for ' + USER + '  -  ' + dt, M, 34);
  
   y = 60;
  
   const sec = (title, content) => {
+    if (!content) return;
     chk(14);
     doc.setFillColor(242, 218, 148);
     doc.roundedRect(M - 3, y - 5.5, TW + 6, 9, 2, 2, 'F');
@@ -467,15 +488,14 @@ function dlPDF() {
     doc.setTextColor(85, 48, 0); doc.text(title, M, y); y += 10;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
     doc.setTextColor(22, 12, 3);
-    for (const line of doc.splitTextToSize(content, TW)) {
+    for (const line of doc.splitTextToSize(clean(content), TW)) {
       chk(6); doc.text(line, M, y); y += 5.5;
     }
     y += 8;
   };
  
-  const cleanPDF = (txt) => txt.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu, '').replace(/[^\x00-\x7E\n\r]/g, '').trim();
-  if (fu) sec('BUSINESS SITUATION', cleanPDF(fu.content));
-  if (AUDIT_TXT) sec('YOUR AUDIT', cleanPDF(AUDIT_TXT));
+  const fu = HIST.find(m => m.role === 'user');
+  if (fu) sec('BUSINESS SITUATION', fu.content);
   if (AUDIT_TXT) sec('YOUR AUDIT', AUDIT_TXT);
  
   let ai = -1;
@@ -493,7 +513,7 @@ function dlPDF() {
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i); doc.setFontSize(7.5); doc.setTextColor(130, 100, 60);
-    doc.text('Brew & Audit  ·  brewed with AI', M, 290);
+    doc.text('Brew & Audit  -  brewed with AI', M, 290);
     doc.text(i + ' / ' + pages, W - M, 290, { align: 'right' });
   }
  
@@ -530,6 +550,8 @@ function scroll() { const m = document.getElementById('msgs'); m.scrollTop = m.s
 function setBtn(d) { document.getElementById('sndbtn').disabled = d; }
 function grow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px'; }
 function onKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
+ 
+function focusInput() { const el = document.getElementById('ui'); el.focus(); el.scrollIntoView({ behavior: 'smooth' }); }
  
 function toast(msg) {
   document.querySelectorAll('.toast').forEach(e => e.remove());
