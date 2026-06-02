@@ -326,6 +326,10 @@ function send() {
     const a = document.createElement('div');
     a.className = 'ack'; a.textContent = '✦ Sage noted that';
     document.getElementById('msgs').appendChild(a); scroll();
+    showAct([
+      { l: "I've shared everything →", c: 'prim', fn: 'readyForSummary()' },
+      { l: '☕ Brew My Audit', c: 'sec', fn: 'brewAudit()' }
+    ]);
   } else if (STAGE === 'followup') {
     callSage(txt, P.followup, 'followup');
   }
@@ -419,14 +423,18 @@ function onDone(txt, nextStage) {
       { l: 'Add something first', c: 'sec', fn: 'addMore()' }
     ]);
   } else if (nextStage === 'audit') {
-    AUDIT_TXT = txt; stag('Your Audit');
-    document.getElementById('inp').classList.add('hidden');
-    showAct([
-      { l: '⬇ Download PDF', c: 'prim', fn: 'dlPDF()' },
-      { l: 'Ask Sage a follow-up', c: 'sec', fn: 'startFollowup()' }
-    ]);
+    AUDIT_TXT = txt;
+    stag('Your Audit');
+    STAGE = 'followup';
+    document.getElementById('ui').placeholder = 'Keep chatting with Sage — ask anything…';
+    showAct([{ l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' }]);
+    setTimeout(() => {
+      const inv = `What would you like to dig into, ${USER}? I\'m here. ☕`;
+      addMsg('sage', inv);
+      HIST.push({ role: 'assistant', content: inv });
+    }, 600);
   } else if (nextStage === 'followup') {
-    stag('Follow-up Chat');
+    stag('Chatting with Sage');
     showAct([{ l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' }]);
   }
 }
