@@ -9,31 +9,27 @@ module.exports = async function handler(req, res) {
   try {
     const { messages, system } = req.body;
 
-    const contents = messages.map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }]
-    }));
-
-    const upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          contents,
-          generationConfig: { maxOutputTokens: 2000, temperature: 0.7 }
-        })
-      }
-    );
+    const upstream = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: system },
+          ...messages
+        ],
+        max_tokens: 2000,
+        temperature: 0.7
+      })
+    });
 
     const data = await upstream.json();
+    if (!upstream.ok) return res.status(upstream.status).json({ error: data?.error?.message || 'API error' });
 
-    if (!upstream.ok) {
-      return res.status(upstream.status).json({ error: data?.error?.message || 'API error' });
-    }
-
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const text = data.choices?.[0]?.message?.content || '';
     res.status(200).json({ content: [{ type: 'text', text }] });
 
   } catch (err) {
