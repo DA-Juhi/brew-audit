@@ -465,8 +465,9 @@ function dlPDF() {
     y += 8;
   };
  
-  const fu = HIST.find(m => m.role === 'user');
-  if (fu) sec('BUSINESS SITUATION', fu.content);
+  const cleanPDF = (txt) => txt.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27FF}]/gu, '').replace(/[^\x00-\x7E\n\r]/g, '').trim();
+  if (fu) sec('BUSINESS SITUATION', cleanPDF(fu.content));
+  if (AUDIT_TXT) sec('YOUR AUDIT', cleanPDF(AUDIT_TXT));
   if (AUDIT_TXT) sec('YOUR AUDIT', AUDIT_TXT);
  
   let ai = -1;
@@ -484,7 +485,7 @@ function dlPDF() {
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i); doc.setFontSize(7.5); doc.setTextColor(130, 100, 60);
-    doc.text('Brew & Audit  ·  brewed with ☕ and AI', M, 290);
+    doc.text('Brew & Audit  ·  brewed with AI', M, 290);
     doc.text(i + ' / ' + pages, W - M, 290, { align: 'right' });
   }
  
@@ -532,4 +533,3 @@ function toast(msg) {
 </script>
 </body>
 </html>
- 
