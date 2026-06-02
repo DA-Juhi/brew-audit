@@ -10,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
 :root {
   --bg0: #060300;
   --bg1: #100800;
@@ -33,15 +33,15 @@
   --r-lg: 22px;
   --ease: cubic-bezier(.4,0,.2,1);
 }
-
+ 
 html, body { height: 100%; overflow: hidden; background: var(--bg0); color: var(--cream); font-family: var(--ff-b); font-size: 15px; line-height: 1.6; }
-
+ 
 body::after {
   content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   background-size: 256px; opacity: 0.55;
 }
-
+ 
 /* ── WELCOME ── */
 #welcome {
   position: fixed; inset: 0; z-index: 10;
@@ -51,19 +51,19 @@ body::after {
   transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
 }
 #welcome.out { opacity: 0; transform: translateY(-22px); pointer-events: none; }
-
+ 
 .steam { display: flex; gap: 8px; justify-content: center; margin-bottom: 4px; height: 34px; align-items: flex-end; }
 .sl { width: 3px; border-radius: 3px; background: linear-gradient(to top, var(--gold), transparent); transform-origin: bottom center; animation: sr 2.1s ease-in-out infinite; }
 .sl:nth-child(1){height:14px;animation-delay:0s} .sl:nth-child(2){height:22px;animation-delay:.38s} .sl:nth-child(3){height:17px;animation-delay:.76s}
 @keyframes sr { 0%{transform:scaleY(1) translateY(0);opacity:.75} 55%{transform:scaleY(1.18) translateY(-9px);opacity:1} 100%{transform:scaleY(.65) translateY(-20px);opacity:0} }
-
+ 
 .cup { display: block; width: 72px; height: 58px; margin: 0 auto 2.2rem; }
-
+ 
 .logo { font-family: var(--ff-d); font-size: 4rem; font-weight: 300; line-height: 1; color: var(--gold-b); letter-spacing: 0.01em; margin-bottom: 0.45rem; text-align: center; }
 .logo em { font-style: italic; color: var(--cream-d); font-weight: 300; }
 .tagline { font-size: 0.7rem; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cream-d); margin-bottom: 3.5rem; text-align: center; }
 .rule { width: 48px; height: 1px; background: var(--border-hi); margin: 0 auto 2.75rem; }
-
+ 
 .klabel { display: block; font-size: 0.67rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cream-d); margin-bottom: 0.65rem; text-align: center; }
 .kinput {
   display: block; width: 316px; max-width: calc(100vw - 2.5rem);
@@ -74,7 +74,7 @@ body::after {
 }
 .kinput:focus { outline: none; border-color: var(--border-hi); background: var(--bg3); }
 .kinput::placeholder { color: var(--cream-f); }
-
+ 
 .begin {
   display: block; margin: 0 auto; padding: 0.92rem 2.9rem;
   background: linear-gradient(135deg, #B8820E, var(--gold-b) 55%, var(--gold-l));
@@ -85,9 +85,9 @@ body::after {
 }
 .begin:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(200,146,30,.36); }
 .begin:active { transform: translateY(0); }
-
+ 
 .wfoot { margin-top: 2rem; font-size: 0.69rem; color: var(--cream-f); text-align: center; line-height: 1.85; }
-
+ 
 /* ── CHAT ── */
 #chat {
   position: fixed; inset: 0; z-index: 5;
@@ -96,7 +96,7 @@ body::after {
   transition: opacity 0.55s var(--ease);
 }
 #chat.in { opacity: 1; pointer-events: all; }
-
+ 
 .hdr {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0.88rem 1.5rem; flex-shrink: 0;
@@ -104,7 +104,7 @@ body::after {
 }
 .hdr-logo { font-family: var(--ff-d); font-size: 1.52rem; font-weight: 400; color: var(--gold-b); letter-spacing: .02em; }
 .stage-tag { font-size: 0.67rem; font-weight: 400; letter-spacing: .15em; text-transform: uppercase; color: var(--cream-d); padding: .28rem .85rem; border: 1px solid var(--border); border-radius: 20px; }
-
+ 
 #msgs {
   flex: 1; overflow-y: auto; overflow-x: hidden;
   padding: 1.5rem 1.25rem; display: flex; flex-direction: column; gap: 1.2rem;
@@ -113,35 +113,35 @@ body::after {
 #msgs::-webkit-scrollbar { width: 3px; }
 #msgs::-webkit-scrollbar-track { background: transparent; }
 #msgs::-webkit-scrollbar-thumb { background: var(--cream-f); border-radius: 2px; }
-
+ 
 .msg { max-width: 78%; animation: mf .28s ease-out both; }
 .msg.sage { align-self: flex-start; }
 .msg.user { align-self: flex-end; }
 @keyframes mf { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-
+ 
 .msg-who { font-size: .62rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--cream-d); margin-bottom: .36rem; }
 .msg.user .msg-who { text-align: right; }
-
+ 
 .msg-bub { padding: 1rem 1.3rem; border-radius: var(--r-lg); font-size: .88rem; line-height: 1.76; word-break: break-word; white-space: pre-wrap; }
 .msg.sage .msg-bub { background: var(--bg3); border: 1px solid var(--border); color: var(--cream); font-family: var(--ff-s); border-bottom-left-radius: 4px; }
 .msg.user .msg-bub { background: linear-gradient(135deg, #B8820E, var(--gold-b)); color: #120700; font-family: var(--ff-b); font-weight: 500; font-size: .86rem; border-bottom-right-radius: 4px; }
-
+ 
 .typing { align-self: flex-start; display: flex; gap: 5px; padding: .78rem 1.1rem; border-radius: var(--r-lg); background: var(--bg3); border: 1px solid var(--border); border-bottom-left-radius: 4px; animation: mf .28s ease-out both; }
 .td { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: tp 1.3s ease-in-out infinite; }
 .td:nth-child(2){animation-delay:.18s} .td:nth-child(3){animation-delay:.36s}
 @keyframes tp { 0%,80%,100%{transform:scale(.65);opacity:.3} 40%{transform:scale(1);opacity:1} }
-
+ 
 .ack { align-self: center; font-size: .68rem; color: var(--cream-d); font-style: italic; animation: mf .28s ease-out both; }
-
+ 
 #act { padding: .85rem 1.25rem; background: var(--bg2); border-top: 1px solid var(--border); display: none; gap: .75rem; flex-wrap: wrap; flex-shrink: 0; align-items: center; }
 #act.show { display: flex; }
-
+ 
 .abtn { padding: .62rem 1.3rem; border-radius: var(--r); font-family: var(--ff-b); font-size: .8rem; font-weight: 500; cursor: pointer; transition: all .15s; border: 1px solid; line-height: 1; }
 .abtn.prim { background: linear-gradient(135deg, #B8820E, var(--gold-b)); border-color: transparent; color: #120700; font-weight: 600; }
 .abtn.prim:hover { box-shadow: 0 4px 18px rgba(200,146,30,.4); transform: translateY(-1px); }
 .abtn.sec { background: transparent; border-color: var(--border-hi); color: var(--cream-d); }
 .abtn.sec:hover { background: var(--gold-glow); color: var(--cream); }
-
+ 
 .brewing { align-self: center; display: flex; flex-direction: column; align-items: center; gap: .7rem; padding: 1rem 0; animation: mf .3s ease-out both; }
 .bbars { display: flex; gap: 4px; align-items: flex-end; height: 26px; }
 .bbar { width: 4px; border-radius: 3px; background: linear-gradient(to top, var(--gold), var(--gold-l)); animation: bb .85s ease-in-out infinite alternate; }
@@ -149,29 +149,29 @@ body::after {
 @keyframes bb { from{transform:scaleY(.55);opacity:.45} to{transform:scaleY(1);opacity:1} }
 .btxt { font-family: var(--ff-d); font-size: 1.1rem; font-style: italic; color: var(--gold-b); }
 .bsub { font-size: .69rem; color: var(--cream-d); letter-spacing: .08em; }
-
+ 
 #inp { display: flex; align-items: flex-end; gap: .75rem; padding: 1rem 1.25rem; background: var(--bg1); border-top: 1px solid var(--border); flex-shrink: 0; }
 #inp.hidden { display: none; }
-
+ 
 #ui { flex: 1; padding: .8rem 1.1rem; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); color: var(--cream); font-family: var(--ff-b); font-size: .88rem; line-height: 1.55; resize: none; min-height: 46px; max-height: 130px; overflow-y: auto; transition: border-color .2s, background .2s; }
 #ui:focus { outline: none; border-color: var(--border-hi); background: var(--bg4); }
 #ui::placeholder { color: var(--cream-f); }
-
+ 
 .sndbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .15s; }
 .sndbtn:hover { background: var(--gold-b); transform: scale(1.06); }
 .sndbtn:disabled { opacity: .32; cursor: not-allowed; transform: none; }
 .sndbtn svg { fill: none; stroke: #120700; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
 .powered { text-align: center; padding: 0.45rem; font-size: 0.62rem; color: var(--cream-f); letter-spacing: 0.08em; background: var(--bg1); border-top: 1px solid var(--border); flex-shrink: 0; }
-
+ 
 .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #2E0000; border: 1px solid #6A0000; color: #FFA0A0; padding: .65rem 1.4rem; border-radius: var(--r); font-size: .79rem; z-index: 9999; white-space: nowrap; max-width: calc(100vw - 2rem); animation: ti .3s ease-out; }
 @keyframes ti { from{opacity:0;bottom:.5rem} to{opacity:1;bottom:1.5rem} }
-
+ 
 @media(max-width:600px) { .msg{max-width:91%} .logo{font-size:2.9rem} .kinput{width:260px} }
 </style>
 </head>
 <body>
-
+ 
 <!-- WELCOME -->
 <div id="welcome">
   <div class="steam">
@@ -184,19 +184,19 @@ body::after {
     <path d="M11 51 Q14 55 36 55 Q58 55 61 51" stroke="#C8921E" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.35"/>
     <path d="M21 23 Q27 19 36 23 Q45 27 51 23" stroke="#C8921E" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.45"/>
   </svg>
-
+ 
   <div class="logo">Brew <em>&</em> Audit</div>
   <div class="tagline">Pour your problems in. Walk out with answers.</div>
   <div class="rule"></div>
-
+ 
   <label class="klabel">What's your first name?</label>
   <input type="text" class="kinput" id="userName" placeholder="e.g. Sarah, James, Alex…" autocomplete="given-name" maxlength="40"
     onkeydown="if(event.key==='Enter') startSession()">
   <button class="begin" onclick="startSession()">Begin Session ☕</button>
-
+ 
   <p class="wfoot">Free to use &nbsp;·&nbsp; No sign-up &nbsp;·&nbsp; Nothing stored</p>
 </div>
-
+ 
 <!-- CHAT -->
 <div id="chat">
   <header class="hdr">
@@ -216,7 +216,7 @@ body::after {
   </div>
   <div class="powered">✦ Sage is powered by Claude AI &nbsp;·&nbsp; Brew &amp; Audit</div>
 </div>
-
+ 
 <script>
 /* ── STATE ── */
 let USER = '';
@@ -224,84 +224,84 @@ let STAGE = 'idle';
 let HIST = [];
 let AUDIT_TXT = '';
 let BUSY = false;
-
+ 
 /* ── PROMPTS ── */
 const P = {
 clarify: `You are Sage — a warm, razor-sharp business consultant at Brew & Audit. You speak like a brilliant friend with deep business experience: direct, warm, zero jargon.
-
+ 
 A business owner just described their situation. Your ONLY job right now is to ask 3–5 targeted clarifying questions. Do NOT offer advice or analysis yet.
-
+ 
 Ask smart questions about:
 • Scale — team size, transaction volume, revenue range
 • The exact process that is broken or slow
 • Where specifically it breaks down or costs the most
 • What they have already tried
 • Rough cost in time or money per week or month
-
+ 
 Be warm and curious. Number each question. Keep them short and punchy.`,
-
+ 
 summarize: `You are Sage at Brew & Audit. Based on everything this business owner has shared with you, write a warm, clear summary of what you understand about their situation.
-
+ 
 3–4 sentences max. Be specific — reference the actual details, numbers, and processes they mentioned.
-
+ 
 End your message with exactly this sentence: "Does that sound right? Hit Brew My Audit and I'll give you the full picture. ☕"`,
-
+ 
 audit: `You are Sage — a brilliant, warm business process consultant at Brew & Audit. Based on everything you have learned, deliver a complete business audit.
-
+ 
 Use EXACTLY this structure with these EXACT emoji headers:
-
+ 
 ☕ THE REAL PROBLEM
 2–3 sentences on the actual root cause — not just symptoms. Be specific and direct.
-
+ 
 🔍 WHAT'S SLOWING YOU DOWN
 List 2–4 specific bottlenecks as bullet points. For each one, briefly explain why it costs time or money.
-
+ 
 💡 WHAT YOU CAN DO
 List 3–5 concrete, actionable recommendations as bullet points. Most impactful first. Be specific — not "improve communication" but "run a 10-minute daily standup just for your dispatch team."
-
+ 
 🤖 WHERE AI CAN HELP
 List 2–3 specific places where AI or automation could remove manual work. Name the type of tool — e.g. "an email triage agent that pre-sorts and drafts replies", "an automated weekly report that pulls from your spreadsheet."
-
+ 
 🎯 YOUR NEXT STEP THIS WEEK
 One clear, realistic action they can take in the next 7 days. One sentence. Make it specific.
-
+ 
 Speak like a smart, caring friend. Reference specific things they told you. No jargon, no fluff.`,
-
+ 
 followup: `You are Sage at Brew & Audit. You have just delivered a full business audit. You are now in a follow-up conversation.
-
+ 
 Answer questions directly. Go deeper on any recommendation. Help them think through implementation. Be warm, specific, practical. Do not repeat the full audit — build on it.`
 };
-
+ 
 /* ── START ── */
 function startSession() {
   const name = document.getElementById('userName').value.trim();
   if (!name) { toast('Just your first name is all we need ☕'); return; }
   USER = name.charAt(0).toUpperCase() + name.slice(1);
-
+ 
   document.getElementById('welcome').classList.add('out');
   document.getElementById('chat').classList.add('in');
-
+ 
   STAGE = 'collecting';
   stag('Tell Sage Everything');
-
+ 
   const intro = `Hey ${USER}! Welcome to Brew & Audit. ☕
-
+ 
 I'm Sage — think of me as that smart friend who genuinely knows business operations and where AI can actually move the needle. No buzzwords, no fluff.
-
+ 
 Tell me what's going on. What's the problem? What's stopping the business from getting where you want it to be? The more honestly you describe it, the sharper your audit will be.
-
+ 
 Pour it all out — I'm listening.`;
   addMsg('sage', intro);
   setTimeout(() => document.getElementById('ui').focus(), 600);
 }
-
+ 
 /* ── SEND ── */
 function send() {
   const el = document.getElementById('ui');
   const txt = el.value.trim();
   if (!txt || BUSY) return;
   el.value = ''; el.style.height = '46px';
-
+ 
   if (STAGE === 'collecting') {
     clearAct();
     callSage(txt, P.clarify, 'clarifying');
@@ -317,7 +317,7 @@ function send() {
     callSage(txt, P.followup, 'followup');
   }
 }
-
+ 
 /* ── ACTIONS ── */
 function readyForSummary() {
   clearAct();
@@ -326,7 +326,7 @@ function readyForSummary() {
   addMsg('user', t);
   callSage(null, P.summarize, 'confirming');
 }
-
+ 
 function brewAudit() {
   clearAct();
   const t = "Yes, that captures it perfectly. Please give me the full audit.";
@@ -337,13 +337,13 @@ function brewAudit() {
   act.innerHTML = `<div class="brewing"><div class="bbars"><div class="bbar"></div><div class="bbar"></div><div class="bbar"></div><div class="bbar"></div><div class="bbar"></div></div><div class="btxt">Sage is brewing your audit…</div><div class="bsub">Reading between the lines</div></div>`;
   callSage(null, P.audit, 'audit');
 }
-
+ 
 function addMore() {
   clearAct(); STAGE = 'clarifying'; stag('Adding More');
   document.getElementById('ui').placeholder = 'What else would you like to add?';
   document.getElementById('ui').focus();
 }
-
+ 
 function startFollowup() {
   STAGE = 'followup'; stag('Follow-up Chat');
   document.getElementById('inp').classList.remove('hidden');
@@ -353,35 +353,36 @@ function startFollowup() {
   addMsg('sage', ft);
   HIST.push({ role: 'assistant', content: ft });
 }
-
+ 
 /* ── API ── */
 async function callSage(userMsg, sys, nextStage) {
   if (userMsg) { HIST.push({ role: 'user', content: userMsg }); addMsg('user', userMsg); }
   BUSY = true; setBtn(true);
   const typ = addTyping();
-
+ 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: HIST, system: sys })
     });
-
+ 
     const data = await res.json();
-
+ 
     if (!res.ok) {
+      if (res.status === 429) throw new Error('Sage is taking a short break — try again in a moment ☕');
       throw new Error(data?.error?.message || `Server error ${res.status}`);
     }
-
+ 
     const text = data?.content?.[0]?.text || '';
     if (!text) throw new Error('Empty response from Sage. Please try again.');
-
+ 
     typ.remove();
     HIST.push({ role: 'assistant', content: text });
     addMsg('sage', text);
     clearAct();
     onDone(text, nextStage);
-
+ 
   } catch(err) {
     typ?.remove();
     clearAct();
@@ -390,7 +391,7 @@ async function callSage(userMsg, sys, nextStage) {
     BUSY = false; setBtn(false);
   }
 }
-
+ 
 /* ── STAGE TRANSITIONS ── */
 function onDone(txt, nextStage) {
   STAGE = nextStage;
@@ -416,7 +417,7 @@ function onDone(txt, nextStage) {
     showAct([{ l: '⬇ Download PDF', c: 'sec', fn: 'dlPDF()' }]);
   }
 }
-
+ 
 /* ── PDF ── */
 function dlPDF() {
   const { jsPDF } = window.jspdf;
@@ -424,7 +425,7 @@ function dlPDF() {
   const W = 210, M = 22, TW = W - M * 2;
   let y = 0;
   const chk = (h) => { if (y + h > 275) { doc.addPage(); y = 20; } };
-
+ 
   doc.setFillColor(10, 5, 0);
   doc.rect(0, 0, W, 46, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(24);
@@ -434,9 +435,9 @@ function dlPDF() {
   doc.setTextColor(140, 108, 68);
   const dt = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   doc.text('Business Audit Report for ' + USER + '  ·  ' + dt, M, 34);
-
+ 
   y = 60;
-
+ 
   const sec = (title, content) => {
     chk(14);
     doc.setFillColor(242, 218, 148);
@@ -450,11 +451,11 @@ function dlPDF() {
     }
     y += 8;
   };
-
+ 
   const fu = HIST.find(m => m.role === 'user');
   if (fu) sec('BUSINESS SITUATION', fu.content);
   if (AUDIT_TXT) sec('YOUR AUDIT', AUDIT_TXT);
-
+ 
   let ai = -1;
   for (let i = HIST.length - 1; i >= 0; i--) { if (HIST[i].content === AUDIT_TXT) { ai = i; break; } }
   if (ai >= 0) {
@@ -466,17 +467,17 @@ function dlPDF() {
     }
     if (lines.length) sec('FOLLOW-UP NOTES', lines.join('\n\n'));
   }
-
+ 
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i); doc.setFontSize(7.5); doc.setTextColor(130, 100, 60);
     doc.text('Brew & Audit  ·  brewed with ☕ and AI', M, 290);
     doc.text(i + ' / ' + pages, W - M, 290, { align: 'right' });
   }
-
+ 
   doc.save('brew-audit-' + USER.toLowerCase() + '-' + Date.now() + '.pdf');
 }
-
+ 
 /* ── UI HELPERS ── */
 function addMsg(role, content) {
   const el = document.createElement('div');
@@ -486,7 +487,7 @@ function addMsg(role, content) {
   document.getElementById('msgs').appendChild(el);
   scroll(); return el;
 }
-
+ 
 function addTyping() {
   const el = document.createElement('div');
   el.className = 'typing';
@@ -494,20 +495,20 @@ function addTyping() {
   document.getElementById('msgs').appendChild(el);
   scroll(); return el;
 }
-
+ 
 function showAct(btns) {
   const a = document.getElementById('act');
   a.innerHTML = btns.map(b => `<button class="abtn ${b.c}" onclick="${b.fn}">${b.l}</button>`).join('');
   a.classList.add('show');
 }
-
+ 
 function clearAct() { const a = document.getElementById('act'); a.innerHTML = ''; a.classList.remove('show'); }
 function stag(t) { document.getElementById('stageTag').textContent = t; }
 function scroll() { const m = document.getElementById('msgs'); m.scrollTop = m.scrollHeight; }
 function setBtn(d) { document.getElementById('sndbtn').disabled = d; }
 function grow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px'; }
 function onKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
-
+ 
 function toast(msg) {
   document.querySelectorAll('.toast').forEach(e => e.remove());
   const el = document.createElement('div');
