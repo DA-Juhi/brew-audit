@@ -9,32 +9,32 @@ module.exports = async function handler(req, res) {
   try {
     const { messages, system } = req.body;
 
-    if (!messages || !system) {
-      return res.status(400).json({ error: 'Missing messages or system prompt.' });
-    }
+    const contents = messages.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
 
-    const upstream = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        system,
-        messages
-      })
-    });
+    const upstream = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents,
+          generationConfig: { maxOutputTokens: 2000, temperature: 0.7 }
+        })
+      }
+    );
 
     const data = await upstream.json();
 
     if (!upstream.ok) {
-      return res.status(upstream.status).json(data);
+      return res.status(upstream.status).json({ error: data?.error?.message || 'API error' });
     }
 
-    res.status(200).json(data);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    res.status(200).json({ content: [{ type: 'text', text }] });
 
   } catch (err) {
     res.status(500).json({ error: err.message || 'Internal server error.' });
