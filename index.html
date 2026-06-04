@@ -125,6 +125,15 @@ body::after {
 .msg-bub { padding: 1rem 1.3rem; border-radius: var(--r-lg); font-size: .88rem; line-height: 1.76; word-break: break-word; white-space: pre-wrap; }
 .msg.sage .msg-bub { background: var(--bg3); border: 1px solid var(--border); color: var(--cream); font-family: var(--ff-s); border-bottom-left-radius: 4px; }
 .msg.user .msg-bub { background: linear-gradient(135deg, #B8820E, var(--gold-b)); color: #120700; font-family: var(--ff-b); font-weight: 500; font-size: .86rem; border-bottom-right-radius: 4px; }
+.msg.sage .msg-bub { white-space: normal; }
+.msg.sage .msg-bub table { border-collapse: collapse; width: 100%; margin: 0.8rem 0; font-size: 0.8rem; }
+.msg.sage .msg-bub th { background: rgba(200,146,30,0.18); color: var(--gold-l); padding: 0.5rem 0.75rem; border: 1px solid var(--border-hi); text-align: left; font-family: var(--ff-b); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.msg.sage .msg-bub td { padding: 0.5rem 0.75rem; border: 1px solid var(--border); color: var(--cream); vertical-align: top; line-height: 1.5; }
+.msg.sage .msg-bub tr:nth-child(even) td { background: rgba(200,146,30,0.04); }
+.msg.sage .msg-bub strong { color: var(--gold-l); font-weight: 600; }
+.msg.sage .msg-bub p { margin-bottom: 0.6rem; }
+.msg.sage .msg-bub ul, .msg.sage .msg-bub ol { padding-left: 1.2rem; margin-bottom: 0.6rem; }
+.msg.sage .msg-bub li { margin-bottom: 0.25rem; }
  
 .typing { align-self: flex-start; display: flex; gap: 5px; padding: .78rem 1.1rem; border-radius: var(--r-lg); background: var(--bg3); border: 1px solid var(--border); border-bottom-left-radius: 4px; animation: mf .28s ease-out both; }
 .td { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: tp 1.3s ease-in-out infinite; }
@@ -169,6 +178,7 @@ body::after {
  
 @media(max-width:600px) { .msg{max-width:91%} .logo{font-size:2.9rem} .kinput{width:260px} }
 </style>
+ <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
  
@@ -224,97 +234,101 @@ let STAGE = 'idle';
 let HIST = [];
 let AUDIT_TXT = '';
 let BUSY = false;
- 
+
 /* ── PROMPTS ── */
+const SAGE = `You are Sage — a sharp, senior-level AI business auditor. You have the brain of a management consultant, the tongue of a trusted friend, and just the right touch of professionalism. You help founders and operators diagnose exactly what is breaking in their operations and design agentic AI solutions to fix it.
+
+You specialise in identifying manual workflows that can be replaced by AI agents — specific, technical, real automation. Not generic advice. Not "assign someone to manage this." Actual agent architectures: API integrations, classifier pipelines, automated resolution workflows.
+
+---
+
+YOUR CONVERSATION FLOW:
+
+PHASE 1 — CLARIFYING QUESTIONS
+When a user first describes their business problem, ask 3–5 sharp clarifying questions. Send them all in one message. Make them feel like you've already spotted the wound and you're just confirming the depth. Ask about: volume and scale, current manual steps, tools already in use, where time or money is actually bleeding.
+
+PHASE 2 — SUMMARY
+When the user says they have shared everything, summarise what you have understood in 3–4 clean sentences. Confirm the core problem, the scale of it, and the tools they mentioned. End with: "Does this capture it correctly, or is there anything to add?"
+
+PHASE 3 — THE FULL AUDIT
+This is your signature output. Use this exact structure every single time:
+
+**[Business Type] — Operational Audit by Sage**
+
+**The Diagnosis**
+2–3 sentences. What is fundamentally broken and why. Name the real problem, not the symptoms. Be direct.
+
+**Process Blueprint: Current State → Future State**
+
+| Operational Bottleneck | Current Cost & Time Drain | Agentic Solution (Future State) | Measurable Business ROI |
+|---|---|---|---|
+| [specific bottleneck] | [hours/week or £/month lost] | [named AI agent + specific API integration] | [quantified outcome] |
+
+Always include 3–5 rows. Every agentic solution must name a specific agent (e.g. "Order Triage Agent", "Customer Ops Agent", "Inventory Sync Agent") and a real integration relevant to their business (Shopify API, Stripe webhooks, courier APIs, Zendesk, WooCommerce, etc.). No generic software suggestions.
+
+**Agent Architecture — How It Actually Works**
+For the single highest-priority bottleneck, show the data flow in this format:
+[Trigger] → [LLM / Classifier] → [Database or API] → [Automated Action]
+
+**Implementation Roadmap**
+- **Week 1–2:** [Most urgent, highest ROI — be specific]
+- **Week 3–4:** [Second priority — be specific]
+- **Month 2:** [Systemic change — be specific]
+
+**The Bottom Line**
+One punchy paragraph. What happens if they act on this versus what happens if they don't. Make it feel real and urgent.
+
+---
+
+PHASE 4 — FOLLOW-UP
+After the audit, enter free-flowing advisory mode. Answer questions with the same sharpness. Stay in Sage's voice — warm, precise, never generic.
+
+---
+
+RULES YOU NEVER BREAK:
+- Never say "assign someone to research tools" or "build a knowledge base" as standalone advice
+- Always frame solutions as named agents with specific integrations
+- Quantify everything — hours, £, percentage, orders per day
+- The Process Blueprint table MUST appear in every full audit
+- No filler. No fluff. Every sentence earns its place.`;
+
 const P = {
-clarify: `You are Sage — a business consultant with the analytical sharpness of a top-tier advisor and the warmth of a trusted friend. Professional without being stiff. Direct without being cold.
- 
-A business owner just described their situation. Read every word carefully. Ask them 3–5 highly specific clarifying questions based exactly on what they said — not generic questions, but questions that show you understood their specific situation.
- 
-You are trying to uncover:
-• The exact moment in their process where things fall apart — the specific step
-• Which tasks involve manual, repetitive human work that could potentially be removed
-• Real numbers — hours lost per week, money lost per month, how many people are involved
-• Who owns the problem and who else touches it
-• What "fixed" would actually look like for their business
- 
-Rules for your questions:
-• Reference specific things they mentioned — show you were listening
-• One focused question per number — never bundle two questions into one
-• Ask for concrete numbers wherever possible
-• Do NOT offer any advice or solutions yet
-• Do NOT ask what they have tried — focus entirely on understanding the problem first
- 
-Tone: warm, precise, genuinely curious. Like a brilliant friend who happens to know business inside out. Not overly casual, not corporate.`,
- 
-summarize: `You are Sage — a sharp business consultant who speaks with warmth and clarity. Based on everything this owner has shared, write a focused summary of what you understand about their situation.
- 
-3–4 sentences. Use their actual words and numbers where possible. Show you understood not just what they said, but what it means for their business. Be specific — no vague summaries.
- 
-End with exactly: "Does that sound right? Hit Brew My Audit and I'll give you the full picture. ☕"
- 
-Tone: confident and warm. Like someone who has already seen the shape of the problem clearly.`,
- 
-audit: `You are Sage — a business consultant who combines sharp strategic thinking with genuine care for the person in front of you. You have the mind of a top advisor and the voice of a trusted friend. Direct, specific, never generic. No corporate jargon. You tell people what is actually going on.
- 
-Based on everything you have learned, deliver a complete business audit. Use EXACTLY this structure:
- 
-☕ THE REAL PROBLEM
-2–3 sentences. Name the actual root cause — not the symptom they described. Be direct and specific. Reference things they actually told you. This should feel like a moment of real clarity.
- 
-🔍 WHAT'S SLOWING YOU DOWN
-2–4 bullet points. Each names a specific bottleneck and explains in one sentence exactly why it is costing them time or money. Use their actual numbers where possible.
- 
-💡 WHAT YOU CAN DO
-3–5 bullet points, most impactful first. Each recommendation is specific and actionable — not "improve your process" but "assign one dedicated person to handle X so the rest of your team stops context-switching." Speak directly to them.
- 
-🤖 WHERE AI CAN HELP
-2–3 bullet points. Name the specific type of tool or automation that would replace the manual work you identified. Be concrete — "an AI agent that reads incoming emails and drafts categorised replies before a human reviews them" not just "use AI for emails."
- 
-🎯 YOUR NEXT STEP THIS WEEK
-One sentence. One action. The most important thing they can do in the next 7 days. Specific enough that they know exactly what to do Monday morning.
- 
-You are their most knowledgeable friend giving them the real picture. Reference what they actually told you throughout.`,
- 
-followup: `You are Sage — a sharp, warm business consultant in a real conversation. You just delivered an audit and now you are chatting freely.
- 
-Talk like a smart friend, not a consultant writing a document. Short paragraphs. Direct answers. No formal headers. No numbered step-by-step plans. No asterisks or markdown. Just natural conversation.
- 
-When someone asks how to do something, explain it simply and specifically — like you are talking it through with them over coffee. Reference their actual business details. Stay practical and honest.
- 
-If you want to list things, keep it short and natural. Never write a formal multi-step guide. Just talk.`
+  clarify:   SAGE,
+  summarize: SAGE,
+  audit:     SAGE,
+  followup:  SAGE
 };
- 
+
 /* ── START ── */
 function startSession() {
   const name = document.getElementById('userName').value.trim();
   if (!name) { toast('Just your first name is all we need ☕'); return; }
   USER = name.charAt(0).toUpperCase() + name.slice(1);
- 
+
   document.getElementById('welcome').classList.add('out');
   document.getElementById('chat').classList.add('in');
- 
+
   STAGE = 'collecting';
   stag('Tell Sage Everything');
- 
+
   const intro = `Hey ${USER}! Welcome to Brew & Audit. ☕
- 
+
 I'm Sage — think of me as that smart friend who genuinely knows business operations and where AI can actually move the needle. No buzzwords, no fluff.
- 
+
 Tell me what's going on. What's the problem? What's stopping the business from getting where you want it to be? The more honestly you describe it, the sharper your audit will be.
- 
+
 Pour it all out — I'm listening.`;
   addMsg('sage', intro);
   setTimeout(() => document.getElementById('ui').focus(), 600);
 }
- 
+
 /* ── SEND ── */
 function send() {
   const el = document.getElementById('ui');
   const txt = el.value.trim();
   if (!txt || BUSY) return;
   el.value = ''; el.style.height = '46px';
- 
+
   if (STAGE === 'collecting') {
     clearAct();
     callSage(txt, P.clarify, 'clarifying');
@@ -334,7 +348,7 @@ function send() {
     callSage(txt, P.followup, 'followup');
   }
 }
- 
+
 /* ── ACTIONS ── */
 function readyForSummary() {
   clearAct();
@@ -343,7 +357,7 @@ function readyForSummary() {
   addMsg('user', t);
   callSage(null, P.summarize, 'confirming');
 }
- 
+
 function brewAudit() {
   clearAct();
   const t = "Yes, that captures it perfectly. Please give me the full audit.";
@@ -354,13 +368,13 @@ function brewAudit() {
   act.innerHTML = `<div class="brewing"><div class="bbars"><div class="bbar"></div><div class="bbar"></div><div class="bbar"></div><div class="bbar"></div><div class="bbar"></div></div><div class="btxt">Sage is brewing your audit…</div><div class="bsub">Reading between the lines</div></div>`;
   callSage(null, P.audit, 'audit');
 }
- 
+
 function addMore() {
   clearAct(); STAGE = 'clarifying'; stag('Adding More');
   document.getElementById('ui').placeholder = 'What else would you like to add?';
   document.getElementById('ui').focus();
 }
- 
+
 function startFollowup() {
   STAGE = 'followup'; stag('Follow-up Chat');
   document.getElementById('inp').classList.remove('hidden');
@@ -370,36 +384,36 @@ function startFollowup() {
   addMsg('sage', ft);
   HIST.push({ role: 'assistant', content: ft });
 }
- 
+
 /* ── API ── */
 async function callSage(userMsg, sys, nextStage) {
   if (userMsg) { HIST.push({ role: 'user', content: userMsg }); addMsg('user', userMsg); }
   BUSY = true; setBtn(true);
   const typ = addTyping();
- 
+
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: HIST, system: sys })
     });
- 
+
     const data = await res.json();
- 
+
     if (!res.ok) {
       if (res.status === 429) throw new Error('Sage is taking a short break — try again in a moment ☕');
       throw new Error(data?.error?.message || `Server error ${res.status}`);
     }
- 
+
     const text = data?.content?.[0]?.text || '';
     if (!text) throw new Error('Empty response from Sage. Please try again.');
- 
+
     typ.remove();
     HIST.push({ role: 'assistant', content: text });
     addMsg('sage', text);
     clearAct();
     onDone(text, nextStage);
- 
+
   } catch(err) {
     typ?.remove();
     clearAct();
@@ -408,7 +422,7 @@ async function callSage(userMsg, sys, nextStage) {
     BUSY = false; setBtn(false);
   }
 }
- 
+
 /* ── STAGE TRANSITIONS ── */
 function onDone(txt, nextStage) {
   STAGE = nextStage;
@@ -444,7 +458,7 @@ function onDone(txt, nextStage) {
     ]);
   }
 }
- 
+
 /* ── PDF ── */
 function dlPDF() {
   const { jsPDF } = window.jspdf;
@@ -452,15 +466,20 @@ function dlPDF() {
   const W = 210, M = 22, TW = W - M * 2;
   let y = 0;
   const chk = (h) => { if (y + h > 275) { doc.addPage(); y = 20; } };
- 
-  // Clean non-ASCII for PDF
+
   const clean = (txt) => {
     if (!txt) return '';
     return txt
+      .replace(/\|.*\|/g, '')
+      .replace(/[-|]+/g, '')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/^\* /gm, '• ')
+      .replace(/^\- /gm, '• ')
+      .replace(/^#{1,3} /gm, '')
       .replace(/[^\x20-\x7E\n\r]/g, '')
       .trim();
   };
- 
+
   doc.setFillColor(10, 5, 0);
   doc.rect(0, 0, W, 46, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(24);
@@ -470,9 +489,9 @@ function dlPDF() {
   doc.setTextColor(140, 108, 68);
   const dt = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   doc.text('Business Audit Report for ' + USER + '  -  ' + dt, M, 34);
- 
+
   y = 60;
- 
+
   const sec = (title, content) => {
     if (!content) return;
     chk(14);
@@ -487,11 +506,11 @@ function dlPDF() {
     }
     y += 8;
   };
- 
+
   const fu = HIST.find(m => m.role === 'user');
   if (fu) sec('BUSINESS SITUATION', fu.content);
   if (AUDIT_TXT) sec('YOUR AUDIT', AUDIT_TXT);
- 
+
   let ai = -1;
   for (let i = HIST.length - 1; i >= 0; i--) { if (HIST[i].content === AUDIT_TXT) { ai = i; break; } }
   if (ai >= 0) {
@@ -503,35 +522,32 @@ function dlPDF() {
     }
     if (lines.length) sec('FOLLOW-UP NOTES', lines.join('\n\n'));
   }
- 
+
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++) {
     doc.setPage(i); doc.setFontSize(7.5); doc.setTextColor(130, 100, 60);
     doc.text('Brew & Audit  -  brewed with AI', M, 290);
     doc.text(i + ' / ' + pages, W - M, 290, { align: 'right' });
   }
- 
+
   doc.save('brew-audit-' + USER.toLowerCase() + '-' + Date.now() + '.pdf');
 }
- 
+
 /* ── UI HELPERS ── */
-function cleanSage(txt) {
-  return txt
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/^\* /gm, '• ')
-    .replace(/^\- /gm, '• ')
-    .replace(/^#{1,3} /gm, '');
-}
- 
 function addMsg(role, content) {
   const el = document.createElement('div');
   el.className = 'msg ' + role;
   el.innerHTML = `<div class="msg-who">${role === 'sage' ? '✦ Sage' : USER || 'You'}</div><div class="msg-bub"></div>`;
-  el.querySelector('.msg-bub').textContent = role === 'sage' ? cleanSage(content) : content;
+  const bub = el.querySelector('.msg-bub');
+  if (role === 'sage') {
+    bub.innerHTML = marked.parse(content);
+  } else {
+    bub.textContent = content;
+  }
   document.getElementById('msgs').appendChild(el);
   scroll(); return el;
 }
- 
+
 function addTyping() {
   const el = document.createElement('div');
   el.className = 'typing';
@@ -539,22 +555,21 @@ function addTyping() {
   document.getElementById('msgs').appendChild(el);
   scroll(); return el;
 }
- 
+
 function showAct(btns) {
   const a = document.getElementById('act');
   a.innerHTML = btns.map(b => `<button class="abtn ${b.c}" onclick="${b.fn}">${b.l}</button>`).join('');
   a.classList.add('show');
 }
- 
+
 function clearAct() { const a = document.getElementById('act'); a.innerHTML = ''; a.classList.remove('show'); }
 function stag(t) { document.getElementById('stageTag').textContent = t; }
 function scroll() { const m = document.getElementById('msgs'); m.scrollTop = m.scrollHeight; }
 function setBtn(d) { document.getElementById('sndbtn').disabled = d; }
 function grow(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 130) + 'px'; }
 function onKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
- 
 function focusInput() { const el = document.getElementById('ui'); el.focus(); el.scrollIntoView({ behavior: 'smooth' }); }
- 
+
 function toast(msg) {
   document.querySelectorAll('.toast').forEach(e => e.remove());
   const el = document.createElement('div');
